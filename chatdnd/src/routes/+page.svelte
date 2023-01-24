@@ -3,9 +3,14 @@
 </style>
 
 <script>
-    let name = '';
+    function nameSuggester() {
+        
+    }
+
+    function backgroundCreator() {
+        
+    }
 </script>
 
-<input bind:value={name} placeholder="enter your name">
-
-<p>Hello {name || 'stranger'}!</p>
+<button on:click={nameSuggester}>Name Suggester</button>
+<button on:click={backgroundCreator}>Background Creator</button>
