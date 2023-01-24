@@ -1,5 +1,12 @@
 <style>
+    :global(body) {
+        background-color: #ffecd1;
+    }
 
+    button {
+        background-color: #15616d;
+        color: #ffecd1;
+    }
 </style>
 
 <script>

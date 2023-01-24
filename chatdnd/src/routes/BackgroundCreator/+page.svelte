@@ -1,5 +1,8 @@
 <style>
-
+    button {
+        background-color: #15616d;
+        color: #ffecd1;
+    }
 </style>
 
 <script>
