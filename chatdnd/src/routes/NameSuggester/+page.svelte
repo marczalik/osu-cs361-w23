@@ -1,44 +1,41 @@
 <style>
-    button {
+    .button {
         background-color: #15616d;
         color: #ffecd1;
     }
 </style>
 
 <script>
-    // import {submit} from './+server.js';
+    import { enhance } from '$app/forms';
+
+    export let data;
+    export let form;
 
     let name = '';
     let race = '';
     let playerClass = '';
     let gender = '';
 
-	async function submit() {
-		const res = await fetch('/NameSuggester', {
-			method: 'POST',
-			body: JSON.stringify({
-				name,
-				race,
-                playerClass,
-                gender,
-			})
-        })
-
-        const json = await res.json()
-		let result = JSON.stringify(json)
-    }
-
-    function clear() {
-        
+    function onClear() {
+        name = '';
+        race = '';
+        playerClass = '';
+        gender = '';
     }
 </script>
 
-<form method="POST">
-    <input bind:value={name} placeholder="Name">
-    <input bind:value={race} placeholder="Race">
-    <input bind:value={playerClass} placeholder="Class">
-    <input bind:value={gender} placeholder="Gender">
+{#if form?.error}
+	<p class="error">{form.error}</p>
+{:else if form?.name}
+    <p>{form.name}</p>
+{:else}
+<form method="POST" action="?/submit" use:enhance>
+    <input name="name" id="name" bind:value={name} placeholder="Name">
+    <input name="race" id="race" bind:value={race} placeholder="Race">
+    <input name="playerClass" id="playerClass" bind:value={playerClass} placeholder="Class">
+    <input name="gender" id="gender" bind:value={gender} placeholder="Gender">
 
-    <button type="button" on:click={clear}>Clear Inputs</button>
-    <button type="button" on:click={submit}>Submit</button>
+    <input type="button" name="clear" id="clear" class="button" on:click={onClear} value="Clear Inputs"/>
+    <button name="submit" id="submit" class="button">Submit</button>
 </form>
+{/if}

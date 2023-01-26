@@ -10,12 +10,14 @@
 </style>
 
 <script>
-    function nameSuggester() {
-        
+	import { goto } from "$app/navigation";
+
+    async function nameSuggester() {
+        goto("/NameSuggester");
     }
 
     function backgroundCreator() {
-        
+        goto("/BackgroundCreator");    
     }
 </script>
 
