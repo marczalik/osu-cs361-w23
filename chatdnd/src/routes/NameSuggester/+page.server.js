@@ -9,15 +9,22 @@ export const actions = {
 		const data = await request.formData();
 
         let race = data.get('race');
+        let playerClass = data.get('playerClass');
         let gender = data.get('gender');
 
-        if (race === '') {
+        let result = {
+            name: "Steve"
+        }
+
+        if (race === '' || playerClass === '' || gender === '') {
             return fail(422, {
-                result: gender,
+                result: result,
                 error: "You are missing input fields, are you sure you wish to continue?"
             });
         }
 
-        return { "result": gender };
+        return {
+                result: result
+            };
 	}
 };

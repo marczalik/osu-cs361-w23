@@ -53,7 +53,7 @@
     Result
 </h1>
 <form method="POST" action="?/save" use:enhance>
-    <p>{form.result}</p>
+    <p>{form.result.background}</p>
     <button name="save" id="save" class="button">Save</button>
 </form>
 {:else}
