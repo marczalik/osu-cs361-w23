@@ -21,6 +21,12 @@
     let adventureReason = '';
     let flaw = '';
 
+    let continued = false;
+
+    function onBack() {
+        goto ("/BackgroundCreator");
+    }
+
     function onClear() {
         name = '';
         race = '';
@@ -33,20 +39,19 @@
     }
 
     function onContinue() {
-        goto ("/BackgroundCreator/Result");
-    }
-
-    function onBack() {
-        goto ("/BackgroundCreator");
+        continued = true;
     }
 </script>
 
 <br>
-{#if form?.error}
+{#if form?.error && continued === false}
 	<p class="error">{form.error}</p>
     <button name="back" id="back" class="button" on:click={onBack}>No, Go Back</button>
     <button name="continue" id="continue" class="button" on:click={onContinue}>Continue Anyways</button>
 {:else if form?.result}
+<h1>
+    Result
+</h1>
 <form method="POST" action="?/save" use:enhance>
     <p>{form.result}</p>
     <button name="save" id="save" class="button">Save</button>

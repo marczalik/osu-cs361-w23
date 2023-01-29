@@ -8,11 +8,11 @@
         color: #ffecd1;
     }
 
-    #bgCreator:hover ~ .tooltip .tooltiptext {
+    #bgCreator:hover ~ .tooltip .tooltipText {
         visibility: visible;
     }
 
-    .tooltiptext {
+    .tooltipText {
         visibility: hidden;
         color: #78290f;
     }
@@ -44,5 +44,5 @@
     Find possible background stories for your character!
 </span>
  <div class="tooltip">
-    <span class="tooltiptext">This will take more time!</span>
+    <span class="tooltipText">This will take more time!</span>
 </div> 
