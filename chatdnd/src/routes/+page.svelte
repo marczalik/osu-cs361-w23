@@ -7,6 +7,17 @@
         background-color: #15616d;
         color: #ffecd1;
     }
+
+    #bgCreator:hover ~ .tooltip .tooltiptext {
+        visibility: visible;
+    }
+
+    .tooltiptext {
+        visibility: hidden;
+        color: #78290f;
+    }
+
+
 </style>
 
 <script>
@@ -21,5 +32,17 @@
     }
 </script>
 
-<button on:click={nameSuggester}>Name Suggester</button>
-<button on:click={backgroundCreator}>Background Creator</button>
+<br>
+<button id="nameSuggester" on:click={nameSuggester}>Name Suggester</button>
+<span>
+    Get a suggested name for your character! Try this first :)
+</span>
+<br>
+<br>
+<button id="bgCreator" on:click={backgroundCreator}>Background Creator</button>
+<span>
+    Find possible background stories for your character!
+</span>
+ <div class="tooltip">
+    <span class="tooltiptext">This will take more time!</span>
+</div> 

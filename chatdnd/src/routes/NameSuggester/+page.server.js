@@ -8,11 +8,11 @@ export const actions = {
 	submit: async ({ cookies, request }) => {
 		const data = await request.formData();
 
-        let name = data.get('name')
-        if (name === '') {
+        let race = data.get('race')
+        if (race === '') {
             return fail(422, {error: "You are missing input fields, are you sure you wish to continue?"});
         }
 
-        return { "name": name };
+        return { "result": race };
 	}
 };
