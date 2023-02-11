@@ -4,6 +4,8 @@ import pika
 import random
 import sys
 
+from pika.adapters.blocking_connection import BlockingChannel
+
 HOST = "localhost"
 REQ_QUEUE = "request"
 RESP_QUEUE = "response"
@@ -23,7 +25,7 @@ class RNGService:
         self.resp_queue = resp_queue
         random.seed()
 
-    def createChannel(self):
+    def createChannel(self) -> BlockingChannel:
         print(f"Connecting to host {self.hostname}...")
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=self.hostname)
@@ -52,6 +54,8 @@ class RNGService:
             if request["request"] == "rng":
                 randInt = random.randint(LOWER_BOUND, UPPER_BOUND)
                 respBody = json.dumps({"response": randInt})
+            else:
+                respBody = json.dumps({"response": "ERROR"})
         except:
             respBody = json.dumps({"response": "ERROR"})
 

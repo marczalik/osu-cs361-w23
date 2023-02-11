@@ -30,7 +30,7 @@ class Client:
         return connection
 
     def consume(self) -> None:
-        print(f"Creating queues {self.queue}...")
+        print(f"Creating queue {self.queue}...")
         self.channel.queue_declare(queue=self.queue, durable=False)
 
         self.channel.basic_consume(

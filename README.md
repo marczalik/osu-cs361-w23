@@ -10,7 +10,7 @@ Repo for CS 361 course project and microservice
 1. Clone rns-ms.py and pip install [pika](https://pika.readthedocs.io/en/stable/#).
 1. Start up a local RabbitMQ server on the default port 5672.
 1. Run microservice process.
-1. Connect your project to RabbitMQ and create a channel.
+1. Connect your project to the RabbitMQ server and create a channel.
 
 ---
 ### How to Request Data
@@ -24,6 +24,8 @@ Repo for CS 361 course project and microservice
 
 **_Payload must match exactly._**
 
+3. If payload format does not match, an error response will be sent.
+
 ---
 ### How to Receive Data
 
@@ -31,10 +33,10 @@ Repo for CS 361 course project and microservice
 1. Consume messages from the **'response'** queue, which will contain a JSON payload of the format
 
 ```
-    {'response': <int>}
+    {'response': Union[int, 'ERROR']}
 ```
 
-where `<int>` is a random integer in the range [1,10] returned by the microservice.
+where `int` is a random integer in the range [1,10] returned by the microservice and `'ERROR'` is an error due to malformed request.
 
 ---
 ### UML Sequence Diagram
