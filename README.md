@@ -41,4 +41,4 @@ where `int` is a random integer in the range [1,10] returned by the microservice
 ---
 ### UML Sequence Diagram
 
-![alt text](https://github.com/marczalik/osu-cs361-w23/seq-diagram.png "UML Sequence Diagram")
+![alt text](https://github.com/marczalik/osu-cs361-w23/blob/main/seq-diagram.png "UML Sequence Diagram")
