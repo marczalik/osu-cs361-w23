@@ -46,7 +46,7 @@ class RNGService:
         self.channel.start_consuming()
 
     def procMsgCallback(self, ch, method, properties, body) -> None:
-        print(f"Received message with body \n\t{body}")
+        print(f"Received message with body \n\t{json.loads(body)}")
         request = json.loads(body)
 
         try:

@@ -30,9 +30,6 @@ class Client:
         return connection
 
     def consume(self) -> None:
-        # print(f"Creating queue {self.queue}...")
-        # self.channel.queue_declare(queue=self.queue, durable=False)
-
         self.channel.basic_consume(
             queue=self.queue,
             on_message_callback=self.procMsgCallback,
@@ -42,7 +39,7 @@ class Client:
         self.channel.start_consuming()
 
     def procMsgCallback(self, ch, method, properties, body) -> None:
-        print(f"Received message with body \n\t{body}")
+        print(f"Received message with body \n\t{json.loads(body)}")
         self.connection.close()
 
     def sendMsg(self) -> None:
