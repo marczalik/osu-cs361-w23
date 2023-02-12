@@ -7,7 +7,7 @@ Repo for CS 361 course project and microservice
 ### Initialization
 
 1. Download and install RabbitMQ server. See [here](https://www.rabbitmq.com/download.html) for instructions.
-1. Clone rns-ms.py and pip install [pika](https://pika.readthedocs.io/en/stable/#).
+1. Clone rng-ms.py and pip install [pika](https://pika.readthedocs.io/en/stable/#).
 1. Start up a local RabbitMQ server on the default port 5672.
 1. Run microservice process.
 1. Connect your project to the RabbitMQ server and create a channel.
