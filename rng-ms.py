@@ -33,7 +33,7 @@ class RNGService:
         return connection.channel()
 
     def consume(self) -> None:
-        print(f"Creating queues {self.req_queue} and {self.resp_queue}...")
+        print(f"Creating queues '{self.req_queue}' and '{self.resp_queue}'...")
         self.channel.queue_declare(queue=self.req_queue, durable=False)
         self.channel.queue_declare(queue=self.resp_queue, durable=False)
 
@@ -43,11 +43,10 @@ class RNGService:
             auto_ack=True,
         )
 
-        print(" [*] Waiting for messages. To exit press CTRL+C")
         self.channel.start_consuming()
 
     def procMsgCallback(self, ch, method, properties, body) -> None:
-        print(f"Received message with body {body}")
+        print(f"Received message with body \n\t{body}")
         request = json.loads(body)
 
         try:
@@ -59,7 +58,7 @@ class RNGService:
         except:
             respBody = json.dumps({"response": "ERROR"})
 
-        print(f"Sending back message with body {respBody}")
+        print(f"Sending back message with body \n\t{respBody}")
         self.channel.basic_publish(exchange="", routing_key=RESP_QUEUE, body=respBody)
 
     def start(self) -> None:
