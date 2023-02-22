@@ -31,7 +31,7 @@ def receive(ch, method, properties, body):
     req = json.loads(body)
 
     if len(req) < 2:
-        prompt = json.dumps({"error": "at least one suggestion is required"})
+        prompt = {"error": "at least one suggestion is required"}
         send(prompt)
 
     # sends back a DND character prompt to be passed to ChatGPT for a name suggestion
@@ -46,7 +46,7 @@ def receive(ch, method, properties, body):
         if req.get("playerClass") is not None:
             prompt_str += req["playerClass"]
 
-        prompt = json.dumps({'prompt': prompt_str})
+        prompt = {'prompt': prompt_str}
         print("Message sent: ", prompt)
         send(prompt)
         print(' [*] Waiting for messages. To exit press CTRL+C')
@@ -99,7 +99,7 @@ def receive(ch, method, properties, body):
                 prompt_str += req["flaw"]
                 prompt_str += "."
 
-            prompt = json.dumps({"prompt": prompt_str})
+            prompt = {"prompt": prompt_str}
             print("Message sent.\nYour prompt is", prompt)
             send(prompt)
             print(' [*] Waiting for messages. To exit press CTRL+C')

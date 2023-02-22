@@ -41,7 +41,7 @@ export const actions = {
         const promise = new Promise((resolve) => {
             channel.consume(respQueue, (response) => {
                 console.log(`Message received: ${JSON.parse(response.content)}`);
-                let body = JSON.parse(JSON.parse(response.content));
+                let body = JSON.parse(response.content);
                 resolve(body);
             });
         });
