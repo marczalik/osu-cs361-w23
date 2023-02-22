@@ -15,12 +15,12 @@ export const actions = {
 
         let result = "Err";
 
-        if (race === '' || playerClass === '' || gender === '') {
-            return fail(422, {
-                result: result,
-                error: "You are missing input fields, are you sure you wish to continue?"
-            });
-        }
+        // if (race === '' || playerClass === '' || gender === '') {
+        //     return fail(422, {
+        //         result: result,
+        //         error: "You are missing input fields, are you sure you wish to continue?"
+        //     });
+        // }
 
         let connection = await amqp.connect('amqp://127.0.0.1');
         let channel = await connection.createChannel();
@@ -43,7 +43,7 @@ export const actions = {
                 console.log(`Message received: ${JSON.parse(response.content)}`);
                 let body = JSON.parse(response.content);
                 resolve(body);
-            });
+            }, { noAck: false });
         });
 
         result = await promise;
