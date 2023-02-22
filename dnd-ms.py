@@ -37,13 +37,13 @@ def receive(ch, method, properties, body):
     # sends back a DND character prompt to be passed to ChatGPT for a name suggestion
     if req["queryType"] == "nameSuggestion":
         prompt_str = "Suggest me a name for a(n) "
-        if req.get("race") is not None:
+        if req.get("race"):
             prompt_str += req["race"]
             prompt_str += " "
-        if req.get("gender") is not None:
+        if req.get("gender"):
             prompt_str += req["gender"]
             prompt_str += " "
-        if req.get("playerClass") is not None:
+        if req.get("playerClass"):
             prompt_str += req["playerClass"]
 
         prompt = {'prompt': prompt_str}
@@ -71,30 +71,30 @@ def receive(ch, method, properties, body):
         # dynamically builds a prompt from optional values
         else:
             prompt_str = f"Suggest me a background story for {req['name']}, a(n) "
-            if req.get("race") is not None:
+            if req.get("race"):
                 prompt_str += req["race"]
                 prompt_str += " "
-            if req.get("gender") is not None:
+            if req.get("gender"):
                 prompt_str += req["gender"]
                 prompt_str += " "
-            if req.get("playerClass") is not None:
+            if req.get("playerClass"):
                 prompt_str += req["playerClass"]
 
             prompt_str += "."
 
-            if req.get("homeland") is not None:
+            if req.get("homeland"):
                 prompt_str += " They are from "
                 prompt_str += req["homeland"]
                 prompt_str += "."
-            if req.get("family") is not None:
+            if req.get("family"):
                 prompt_str += " Their family is "
                 prompt_str += req["family"]
                 prompt_str += "."
-            if req.get("adventureReason") is not None:
+            if req.get("adventureReason"):
                 prompt_str += " Their reason for adventuring is to "
                 prompt_str += req["adventureReason"]
                 prompt_str += "."
-            if req.get("flaw") is not None:
+            if req.get("flaw"):
                 prompt_str += " Their flaw is that they are "
                 prompt_str += req["flaw"]
                 prompt_str += "."
