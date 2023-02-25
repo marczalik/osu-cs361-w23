@@ -29,25 +29,6 @@
         goto ("/NameSuggester");
     }
 
-    async function onContinue(race, playerClass, gender) {
-        continued = "true";
-        console.log("fetching")
-        console.log(`${race}`)
-        let formData = new FormData();
-        formData.set("race", race);
-        formData.set("playerClass", playerClass);
-        formData.set("gender", gender);
-        formData.set("continued", continued);
-        const res = await fetch("?/submit", {
-                    method: 'POST',
-                    body: formData
-        });
-        const json = await res.json();
-        console.log(`res: ${json.result}`)
-        form = json;
-        // return json;
-    }
-    
     function reload() {
         invalidateAll();
     }
@@ -64,9 +45,6 @@
     <button name="back" id="back" class="button" on:click|preventDefault={onBack}>No, Go Back</button>
     <button name="continue" id="continue" class="button" on:click={reload}>Continue Anyways</button>
 </form>
-    <!-- <button name="back" id="back" class="button" on:click={onBack}>No, Go Back</button> -->
-    <!-- <button name="continue" id="continue" class="button" on:click={onContinue}>Continue Anyways</button> -->
-    <!-- <button name="continue" id="continue" class="button" on:click={ () => onContinue(race, playerClass, gender) }>Continue Anyways</button> -->
 {:else if form?.result}
 <h1>
     Result

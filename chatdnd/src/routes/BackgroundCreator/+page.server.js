@@ -7,34 +7,60 @@ export const actions = {
     },
 
     submit: async ({ cookies, request }) => {
-        const data = await request.formData();
+        let msg = await createMsg(request);
+        
+        if ( msg["error"] !== undefined )
+        {
+            return fail(422, msg);
+        }
 
-        let name = data.get('name');
-        let race = data.get('race');
-        let playerClass = data.get('playerClass');
-        let gender = data.get('gender');
-        let homeland = data.get('homeland');
-        let family = data.get('family');
-        let adventureReason = data.get('adventureReason');
-        let flaw = data.get('flaw');
+        let result = await sendMsg(msg);
 
-        let result = 'Err';
+        console.log(`Displaying ${result.prompt}`)
+        return {
+            result: result 
+        };
+    },
 
-        // if (name === '' || race === '' || playerClass === '' || gender === '' ||
-        //     homeland === '' || family === '' || adventureReason === '' || flaw === '') {
-        //     return fail(422, {
-        //         result: result,
-        //         error: "You are missing input fields, are you sure you wish to continue?"
-        //     });
-        // }
+    continue: async ({ cookies, request }) => {
+        let msg = await createMsg(request);
+        
+        let result = await sendMsg(msg);
 
-        let connection = await amqp.connect('amqp://127.0.0.1');
-        let channel = await connection.createChannel();
+        console.log(`Displaying ${result.prompt}`)
+        return {
+            result: result 
+        };
+    }
+};
 
-        let reqQueue = 'request';
-        let respQueue = 'response';
+async function createMsg(request) {
+    const data = await request.formData();
 
-        let msg = {
+    let name = data.get('name');
+    let race = data.get('race');
+    let playerClass = data.get('playerClass');
+    let gender = data.get('gender');
+    let homeland = data.get('homeland');
+    let family = data.get('family');
+    let adventureReason = data.get('adventureReason');
+    let flaw = data.get('flaw');
+    let continued = data.get('continued');
+
+    let msg;
+    if ( (name === '' || race === '' || playerClass === '' || gender === ''
+       || homeland === '' || family === '' || adventureReason === '' || flaw === '')
+      && (continued === "false" || continued === '' || continued === null) )
+    {
+        msg =
+        {
+            "error": "You are missing input fields, are you sure you wish to continue?"
+        }
+    }
+    else
+    {
+        msg =
+        {
             "queryType": "background",
             "name": name,
             "race": race,
@@ -45,22 +71,30 @@ export const actions = {
             "adventureReason": adventureReason,
             "flaw": flaw,
         };
+    };
+    
+    return msg;
+}
 
-        console.log(`Sending message \t\n${JSON.stringify(msg)}\n to recipient...`);
-        channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
+async function sendMsg(msg) {
+    let connection = await amqp.connect('amqp://127.0.0.1');
+    let channel = await connection.createChannel();
 
-        const promise = new Promise((resolve) => {
-            channel.consume(respQueue, (response) => {
-                console.log(`Message received: ${JSON.stringify(JSON.parse(response.content))}`);
-                let body = JSON.parse(response.content);
-                resolve(body);
-            }, { noAck: false });
-        });
+    let reqQueue = 'request';
+    let respQueue = 'response';
 
-        result = await promise;
+    console.log(`Sending message \t\n${JSON.stringify(msg)}\n to recipient...`);
+    channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
 
-        return {
-            result: result 
-        };
-	}
-};
+    const promise = new Promise((resolve) => {
+        channel.consume(respQueue, (response) => {
+            console.log(`Message received: ${JSON.stringify(JSON.parse(response.content))}`);
+            let body = JSON.parse(response.content);
+            resolve(body);
+        }, { noAck: false });
+    });
+
+    let result = await promise;
+    
+    return result;
+}
