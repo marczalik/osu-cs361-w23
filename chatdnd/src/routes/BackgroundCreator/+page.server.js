@@ -16,7 +16,6 @@ export const actions = {
         let homeland = data.get('homeland');
         let family = data.get('family');
         let adventureReason = data.get('adventureReason');
-        console.log(`adventure reason: ${adventureReason}`);
         let flaw = data.get('flaw');
 
         let result = 'Err';
@@ -47,12 +46,12 @@ export const actions = {
             "flaw": flaw,
         };
 
+        console.log(`Sending message \t\n${JSON.stringify(msg)}\n to recipient...`);
         channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
-        console.log(`Sending message "${msg}" to recipient...`);
 
         const promise = new Promise((resolve) => {
             channel.consume(respQueue, (response) => {
-                console.log(`Message received: ${JSON.parse(response.content)}`);
+                console.log(`Message received: ${JSON.stringify(JSON.parse(response.content))}`);
                 let body = JSON.parse(response.content);
                 resolve(body);
             }, { noAck: false });

@@ -49,7 +49,7 @@ def receive(ch, method, properties, body):
         prompt = {'prompt': prompt_str}
         print("Message sent: ", prompt)
         send(prompt)
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        # print(' [*] Waiting for messages. To exit press CTRL+C')
 
     # sends back a DND background prompt to be passed to ChatGPT for a name suggestion
     elif req["queryType"] == "background":
@@ -58,7 +58,7 @@ def receive(ch, method, properties, body):
             prompt = json.dumps({"error": "name is required"})
             print("Please try again. Name is required.")
             send(prompt)
-            print(' [*] Waiting for messages. To exit press CTRL+C')
+            # print(' [*] Waiting for messages. To exit press CTRL+C')
 
         # if the only querys are query type and name
         if len(req) == 2:
@@ -66,7 +66,7 @@ def receive(ch, method, properties, body):
             prompt = json.dumps({"prompt": prompt_str})
             print("Message sent: ", prompt)
             send(prompt)
-            print(' [*] Waiting for messages. To exit press CTRL+C')
+            # print(' [*] Waiting for messages. To exit press CTRL+C')
 
         # dynamically builds a prompt from optional values
         else:
@@ -102,13 +102,13 @@ def receive(ch, method, properties, body):
             prompt = {"prompt": prompt_str}
             print("Message sent.\nYour prompt is", prompt)
             send(prompt)
-            print(' [*] Waiting for messages. To exit press CTRL+C')
+            # print(' [*] Waiting for messages. To exit press CTRL+C')
 
     else:
         prompt = json.dumps({"error": "invalid queryType"})
         print("Message sent: ", prompt)
         send(prompt)
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        # print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
 def send(prompt):
