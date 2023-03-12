@@ -25,7 +25,7 @@
 
     function onBack() {
         goto ("/BackgroundCreator");
-    }
+    };
 
     function onClear() {
         name = '';
@@ -36,11 +36,11 @@
         family = '';
         adventureReason = '';
         flaw = '';
-    }
+    };
 
     function reload() {
         invalidateAll();
-    }
+    };
 </script>
 
 <br>
@@ -66,7 +66,7 @@
     Result
 </h1>
 <form method="POST" action="?/save" use:enhance>
-    <p>{form.result.prompt}</p>
+    <p>{form?.result.prompt}</p>
     <button name="save" id="save" class="button">Save</button>
 </form>
 {:else}

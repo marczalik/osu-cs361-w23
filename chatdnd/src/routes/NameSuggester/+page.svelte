@@ -18,20 +18,20 @@
 
     let continued = "false";
 
+    function onBack() {
+        continued = "false";
+        goto ("/NameSuggester");
+    };
+
     function onClear() {
         race = '';
         playerClass = '';
         gender = '';
-    }
-
-    function onBack() {
-        continued = "false";
-        goto ("/NameSuggester");
-    }
+    };
 
     function reload() {
         invalidateAll();
-    }
+    };
 </script>
 
 <br>
