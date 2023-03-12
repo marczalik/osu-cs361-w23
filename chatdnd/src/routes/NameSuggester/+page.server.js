@@ -1,5 +1,15 @@
 import { error, fail, json } from '@sveltejs/kit';
+import { sendMsg } from '../BackgroundCreator/+page.server.js';
 import * as amqp from 'amqplib';
+
+
+import key from '../../../config.json';
+import { Configuration, OpenAIApi } from "openai";
+const configuration = new Configuration({
+    apiKey: key['API-KEY'],
+});
+console.log(configuration)
+const openai = new OpenAIApi(configuration);
 
 export const actions = {
     save: async ({ cookies, request }) => {
@@ -9,16 +19,17 @@ export const actions = {
     submit: async ({ cookies, request }) => {
         let msg = await createMsg(request);
         
-        if ( msg["error"] !== undefined )
-        {
+        if ( msg["error"] !== undefined ) {
             return fail(422, msg);
         }
 
-        let result = await sendMsg(msg);
+        let prompt = await sendMsg(msg);
+        console.log(`Displaying ${prompt.prompt}`)
+        let result = await getResponse(prompt);
+        console.log(result)
 
-        console.log(`Displaying ${result.prompt}`)
         return {
-            result: result 
+            result: result
         };
     },
 
@@ -37,6 +48,7 @@ export const actions = {
  * Creates a message from the form data to be sent to the microservice.
  * 
  * @param request The request object. 
+ * @return {JSON} msg The message to send to the microservice.
  */
 async function createMsg( request ) {
     const data = await request.formData();
@@ -74,30 +86,32 @@ async function hasMissingFields( data ) {
           && ( continued === "false" || continued === '' || continued === null ) );
 };
 
-/**
- * Connects to the RabbitMQ server, sends a message to the microservice, and returns the result.
- * 
- * @param msg The message constructed by createMsg().
- */
-async function sendMsg( msg ) {
-    let connection = await amqp.connect('amqp://127.0.0.1');
-    let channel = await connection.createChannel();
+async function getResponse( prompt ) {
+    const messages = [];
+    messages.push({ role: "user", content: prompt['prompt'] });
 
-    let reqQueue = 'request';
-    let respQueue = 'response';
+    console.log(`messages:`)
+    console.log(messages)
+    let result;
+    try {
+        let completion = await openai.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                messages: messages,
+        });
 
-    console.log(`Sending message \t\n${JSON.stringify(msg)}\n to recipient...`);
-    channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
-
-    const promise = new Promise((resolve) => {
-        channel.consume(respQueue, (response) => {
-            console.log(`Message received: ${JSON.stringify(JSON.parse(response.content))}`);
-            let body = JSON.parse(response.content);
-            resolve(body);
-        }, { noAck: false });
-    });
-
-    let result = await promise;
+        result = completion.data.choices[0].message.content;
+        console.log(completion)
+    } catch (error) {
+        if (error.response) {
+            console.log(error.response.status);
+            console.log(error.response.data);
+          } else {
+            console.log(error.message);
+          }
+        result = "Error!";
+        // console.log(error);
+    }
     
+    console.log(`Result: ${result}`)
     return result;
 };

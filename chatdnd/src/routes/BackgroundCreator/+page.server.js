@@ -9,8 +9,7 @@ export const actions = {
     submit: async ({ cookies, request }) => {
         let msg = await createMsg(request);
         
-        if ( msg["error"] !== undefined )
-        {
+        if ( msg["error"] !== undefined ) {
             return fail(422, msg);
         }
 
@@ -91,7 +90,7 @@ async function hasMissingFields( data ) {
  * 
  * @param msg The message constructed by createMsg().
  */
-async function sendMsg( msg ) {
+export async function sendMsg( msg ) {
     // Set up connection
     let connection = await amqp.connect('amqp://127.0.0.1');
     let channel = await connection.createChannel();

@@ -105,3 +105,6 @@ dist
 
 # Site packages
 /rng-ms
+
+# Config
+config.json

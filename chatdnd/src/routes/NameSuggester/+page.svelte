@@ -50,7 +50,7 @@
     Result
 </h1>
 <form method="POST" action="?/save" use:enhance>
-    <p>{form?.result.prompt}</p>
+    <p>{form?.result}</p>
     <button name="save" id="save" class="button">Save</button>
 </form>
 {:else}
