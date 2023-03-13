@@ -1,5 +1,5 @@
 import { error, fail, json } from '@sveltejs/kit';
-import { sendMsg, getResponse } from '../../shared.js';
+import { sendMsg, getResponse } from '../../utils.js';
 
 export const actions = {
     save: async ({ cookies, request }) => {
