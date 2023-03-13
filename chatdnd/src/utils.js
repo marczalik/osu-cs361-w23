@@ -11,9 +11,10 @@ const openai = new OpenAIApi(configuration);
 /**
  * Responds to submit actions on the input forms.
  *  
- * @param {object} request
+ * @param {Request} request
  * @param {string} queryType
  * @param {boolean} checkContinued
+ * @return {Promise<object>} result
  */
 export async function submit(request, queryType, checkContinued) {
     let msg = await createMsg(request, queryType);
@@ -35,15 +36,15 @@ export async function submit(request, queryType, checkContinued) {
 /**
  * Creates a message from the form data to be sent to the microservice.
  * 
- * @param {object} request 
+ * @param {Request} request 
  * @param {string} queryType 
- * @return {JSON} msg
+ * @return {Promise<object>} msg
  */
 async function createMsg( request, queryType ) {
     const data = await request.formData();
-    let msg;
+    let msg = {};
 
-    if (await hasMissingFields(data, queryType) === true) {
+    if (hasMissingFields(data, queryType) === true) {
         msg = {
             "error": "You are missing input fields, are you sure you wish to continue?"
         };
@@ -61,68 +62,113 @@ async function createMsg( request, queryType ) {
  * @param {string} queryType
  * @return {boolean} Does the Missing Fields message need to be displayed?
  */
-async function hasMissingFields( data, queryType ) {
+function hasMissingFields( data, queryType ) {
+    let result = false;
     if (queryType === "name") {
-        let race = data.get('race');
-        let playerClass = data.get('playerClass');
-        let gender = data.get('gender');
-        let continued = data.get('continued');
-
-        return ( ( race === '' || playerClass === '' || gender === '' )
-              && ( continued === "false" || continued === '' || continued === null ) );
+        result = hasMissingNameFields(data);
     } else if (queryType === "background") {
-        let name = data.get('name');
-        let race = data.get('race');
-        let playerClass = data.get('playerClass');
-        let gender = data.get('gender');
-        let homeland = data.get('homeland');
-        let family = data.get('family');
-        let adventureReason = data.get('adventureReason');
-        let flaw = data.get('flaw');
-        let continued = data.get('continued');
-
-        return ( ( name === '' || race === '' || playerClass === '' || gender === ''
-                || homeland === '' || family === '' || adventureReason === '' || flaw === '' )
-              && ( continued === "false" || continued === '' || continued === null ) );
+        result = hasMissingBackgroundFields(data);
     }
+    
+    return result;
 };
+
+/**
+ * Check for missing fields for Name Suggestor.
+ * 
+ * @param {FormData} data
+ * @return {boolean} Are fields missing?
+ */
+function hasMissingNameFields( data ) {
+    let race = data.get('race');
+    let playerClass = data.get('playerClass');
+    let gender = data.get('gender');
+    let continued = data.get('continued');
+
+    return ( ( race === '' || playerClass === '' || gender === '' )
+          && ( continued === "false" || continued === '' || continued === null ) );
+}
+
+/**
+ * Check for missing fields for Background Suggestor.
+ * 
+ * @param {FormData} data
+ * @return {boolean} Are fields missing?
+ */
+function hasMissingBackgroundFields( data ) {
+    let name = data.get('name');
+    let race = data.get('race');
+    let playerClass = data.get('playerClass');
+    let gender = data.get('gender');
+    let homeland = data.get('homeland');
+    let family = data.get('family');
+    let adventureReason = data.get('adventureReason');
+    let flaw = data.get('flaw');
+    let continued = data.get('continued');
+
+    return ( ( name === '' || race === '' || playerClass === '' || gender === ''
+            || homeland === '' || family === '' || adventureReason === '' || flaw === '' )
+          && ( continued === "false" || continued === '' || continued === null ) );
+}
 
 /**
  * Builds the message that will be sent to the microservice using the values from the form inputs.
  * 
  * @param {FormData} data
  * @param {string} queryType
+ * @return {object} msg
  */
 function constructMsg( data, queryType ) {
-    let msg;
+    let msg = {};
     if (queryType === "name") {
-        msg = {
-            "queryType": "nameSuggestion",
-            "race": data.get('race'),
-            "gender": data.get('gender'),
-            "playerClass": data.get('playerClass'),
-        };
+        msg = constructNameMsg(data);
     } else if (queryType === "background") {
-        msg = {
-            "queryType": "background",
-            "name": data.get('name'),
-            "race": data.get('race'),
-            "gender": data.get('gender'),
-            "playerClass": data.get('playerClass'),
-            "homeland": data.get('homeland'),
-            "family": data.get('family'),
-            "adventureReason": data.get('adventureReason'),
-            "flaw": data.get('flaw'),
-        };
+        msg = constructBackgroundMsg(data);
     }
 
     return msg;
 }
 
 /**
+ * Builds message for Name Suggestion.
+ * 
+ * @param {FormData} data
+ * @return {object} msg
+ */
+function constructNameMsg( data ) {
+    return {
+        "queryType": "nameSuggestion",
+        "race": data.get('race'),
+        "gender": data.get('gender'),
+        "playerClass": data.get('playerClass'),
+    };
+}
+
+/**
+ * Builds message for Background Suggestion.
+ * 
+ * @param {FormData} data
+ * @return {object} msg
+ */
+function constructBackgroundMsg(data) {
+    return {
+        "queryType": "background",
+        "name": data.get('name'),
+        "race": data.get('race'),
+        "gender": data.get('gender'),
+        "playerClass": data.get('playerClass'),
+        "homeland": data.get('homeland'),
+        "family": data.get('family'),
+        "adventureReason": data.get('adventureReason'),
+        "flaw": data.get('flaw'),
+    };
+}
+
+/**
  * Connects to the RabbitMQ server, sends a message to the microservice, and returns the result.
  * 
- * @param {JSON} msg 
+ * @param {object} msg 
+ * @return {Promise<object>} result
  */
 export async function sendMsg( msg ) {
     // Set up connection
@@ -151,7 +197,8 @@ export async function sendMsg( msg ) {
 /**
  * Sends the prompt to a Chat Completion API and returns the result.
  * 
- * @param {JSON} prompt
+ * @param {object} prompt
+ * @return {Promise<string>} result
  */
 export async function getResponse( prompt ) {
     const messages = [];
