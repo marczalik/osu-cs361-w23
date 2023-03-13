@@ -1,7 +1,8 @@
 import { fail } from '@sveltejs/kit';
 import * as amqp from 'amqplib';
 
-import key from './config.json';
+// Set up OpenAI
+import key from '../config.json';
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
     apiKey: key['API-KEY'],
@@ -87,7 +88,7 @@ function hasMissingNameFields( data ) {
 
     return ( ( race === '' || playerClass === '' || gender === '' )
           && ( continued === "false" || continued === '' || continued === null ) );
-}
+};
 
 /**
  * Check for missing fields for Background Suggestor.
@@ -109,7 +110,7 @@ function hasMissingBackgroundFields( data ) {
     return ( ( name === '' || race === '' || playerClass === '' || gender === ''
             || homeland === '' || family === '' || adventureReason === '' || flaw === '' )
           && ( continued === "false" || continued === '' || continued === null ) );
-}
+};
 
 /**
  * Builds the message that will be sent to the microservice using the values from the form inputs.
@@ -127,7 +128,7 @@ function constructMsg( data, queryType ) {
     }
 
     return msg;
-}
+};
 
 /**
  * Builds message for Name Suggestion.
@@ -142,7 +143,7 @@ function constructNameMsg( data ) {
         "gender": data.get('gender'),
         "playerClass": data.get('playerClass'),
     };
-}
+};
 
 /**
  * Builds message for Background Suggestion.
@@ -162,7 +163,7 @@ function constructBackgroundMsg(data) {
         "adventureReason": data.get('adventureReason'),
         "flaw": data.get('flaw'),
     };
-}
+};
 
 /**
  * Connects to the RabbitMQ server, sends a message to the microservice, and returns the result.
@@ -189,9 +190,7 @@ export async function sendMsg( msg ) {
         }, { noAck: false });
     });
 
-    let result = await promise;
-    
-    return result;
+    return await promise;
 };
 
 /**
