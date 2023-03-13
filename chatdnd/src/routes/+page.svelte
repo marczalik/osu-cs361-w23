@@ -6,6 +6,7 @@
     button {
         background-color: #15616d;
         color: #ffecd1;
+        font-size: 1rem;
     }
 
     #bgCreator:hover ~ .tooltip .tooltipText {

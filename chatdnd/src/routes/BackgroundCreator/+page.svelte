@@ -2,6 +2,15 @@
     .button {
         background-color: #15616d;
         color: #ffecd1;
+        font-size: 1rem;
+    }
+
+    input {
+        font-size: 1rem;
+    }
+
+    p {
+        font-size: 2rem;
     }
 </style>
 
