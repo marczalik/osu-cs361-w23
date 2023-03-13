@@ -63,10 +63,12 @@
 </form>
 {:else if form?.result}
 <h1>
-    Result
+    Results
 </h1>
 <form method="POST" action="?/save" use:enhance>
-    <p>{form?.result}</p>
+    <p>
+        {form?.result}
+    </p>
     <button name="save" id="save" class="button">Save</button>
 </form>
 {:else}

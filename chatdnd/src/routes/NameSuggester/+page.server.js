@@ -1,15 +1,5 @@
 import { error, fail, json } from '@sveltejs/kit';
-import { sendMsg } from '../BackgroundCreator/+page.server.js';
-import * as amqp from 'amqplib';
-
-
-import key from '../../../config.json';
-import { Configuration, OpenAIApi } from "openai";
-const configuration = new Configuration({
-    apiKey: key['API-KEY'],
-});
-console.log(configuration)
-const openai = new OpenAIApi(configuration);
+import { sendMsg, getResponse } from '../../shared.js';
 
 export const actions = {
     save: async ({ cookies, request }) => {
@@ -24,9 +14,7 @@ export const actions = {
         }
 
         let prompt = await sendMsg(msg);
-        console.log(`Displaying ${prompt.prompt}`)
         let result = await getResponse(prompt);
-        console.log(result)
 
         return {
             result: result
@@ -35,9 +23,9 @@ export const actions = {
 
     continue: async ({ cookies, request }) => {
         let msg = await createMsg(request);
-        let result = await sendMsg(msg);
+        let prompt = await sendMsg(msg);
+        let result = await getResponse(prompt);
 
-        console.log(`Displaying ${result.prompt}`)
         return {
             result: result 
         };
@@ -84,34 +72,4 @@ async function hasMissingFields( data ) {
 
     return ( ( race === '' || playerClass === '' || gender === '' )
           && ( continued === "false" || continued === '' || continued === null ) );
-};
-
-async function getResponse( prompt ) {
-    const messages = [];
-    messages.push({ role: "user", content: prompt['prompt'] });
-
-    console.log(`messages:`)
-    console.log(messages)
-    let result;
-    try {
-        let completion = await openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
-                messages: messages,
-        });
-
-        result = completion.data.choices[0].message.content;
-        console.log(completion)
-    } catch (error) {
-        if (error.response) {
-            console.log(error.response.status);
-            console.log(error.response.data);
-          } else {
-            console.log(error.message);
-          }
-        result = "Error!";
-        // console.log(error);
-    }
-    
-    console.log(`Result: ${result}`)
-    return result;
 };

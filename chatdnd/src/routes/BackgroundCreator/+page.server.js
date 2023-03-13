@@ -1,5 +1,5 @@
 import { error, fail, json } from '@sveltejs/kit';
-import * as amqp from 'amqplib';
+import { sendMsg, getResponse } from '../../shared.js';
 
 export const actions = {
     save: async ({ cookies, request }) => {
@@ -13,9 +13,9 @@ export const actions = {
             return fail(422, msg);
         }
 
-        let result = await sendMsg(msg);
+        let prompt = await sendMsg(msg);
+        let result = await getResponse(prompt);
 
-        console.log(`Displaying ${result.prompt}`)
         return {
             result: result 
         };
@@ -23,9 +23,9 @@ export const actions = {
 
     continue: async ({ cookies, request }) => {
         let msg = await createMsg(request);
-        let result = await sendMsg(msg);
+        let prompt = await sendMsg(msg);
+        let result = await getResponse(prompt);
 
-        console.log(`Displaying ${result.prompt}`)
         return {
             result: result 
         };
@@ -83,34 +83,4 @@ async function hasMissingFields( data ) {
     return ( ( name === '' || race === '' || playerClass === '' || gender === ''
             || homeland === '' || family === '' || adventureReason === '' || flaw === '')
           && ( continued === "false" || continued === '' || continued === null ) );
-};
-
-/**
- * Connects to the RabbitMQ server, sends a message to the microservice, and returns the result.
- * 
- * @param msg The message constructed by createMsg().
- */
-export async function sendMsg( msg ) {
-    // Set up connection
-    let connection = await amqp.connect('amqp://127.0.0.1');
-    let channel = await connection.createChannel();
-
-    let reqQueue = 'request';
-    let respQueue = 'response';
-
-    console.log(`Sending message \t\n${JSON.stringify(msg)}\n to recipient...`);
-    channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
-
-    // Send message and await response
-    const promise = new Promise((resolve) => {
-        channel.consume(respQueue, (response) => {
-            console.log(`Message received: ${JSON.stringify(JSON.parse(response.content))}`);
-            let body = JSON.parse(response.content);
-            resolve(body);
-        }, { noAck: false });
-    });
-
-    let result = await promise;
-    
-    return result;
 };
