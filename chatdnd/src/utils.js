@@ -17,7 +17,7 @@ const openai = new OpenAIApi(configuration);
  * @param {boolean} checkContinued
  * @return {Promise<object>} result
  */
-export async function submit(request, queryType, checkContinued) {
+export async function submit( request, queryType, checkContinued ) {
     let msg = await createMsg(request, queryType);
     
     if (checkContinued === true) {
@@ -151,7 +151,7 @@ function constructNameMsg( data ) {
  * @param {FormData} data
  * @return {object} msg
  */
-function constructBackgroundMsg(data) {
+function constructBackgroundMsg( data ) {
     return {
         "queryType": "background",
         "name": data.get('name'),
@@ -179,9 +179,8 @@ export async function sendMsg( msg ) {
     let reqQueue = 'request';
     let respQueue = 'response';
 
-    channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
-
     // Send message and await response
+    channel.sendToQueue(reqQueue, Buffer.from(JSON.stringify(msg)));
     const promise = new Promise((resolve) => {
         channel.consume(respQueue, (response) => {
             console.log(`Message received: ${JSON.stringify(JSON.parse(response.content))}`);
@@ -210,6 +209,7 @@ export async function getResponse( prompt ) {
             messages: messages,
         });
         result = completion.data.choices[0].message.content;
+        console.log(`Result: ${result}`);
     } catch (error) {
         console.log(error.message);
         result = "Error!";
