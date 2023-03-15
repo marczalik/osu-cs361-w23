@@ -26,7 +26,7 @@ export async function submit( request, queryType, checkContinued ) {
         }
     }
 
-    let prompt = await sendMsg(msg);
+    let prompt = await getPrompt(msg);
     let result = await getResponse(prompt);
 
     return {
@@ -171,7 +171,7 @@ function constructBackgroundMsg( data ) {
  * @param {object} msg 
  * @return {Promise<object>} result
  */
-export async function sendMsg( msg ) {
+export async function getPrompt( msg ) {
     // Set up connection
     let connection = await amqp.connect('amqp://127.0.0.1');
     let channel = await connection.createChannel();
@@ -202,6 +202,7 @@ export async function getResponse( prompt ) {
     const messages = [];
     messages.push({ role: "user", content: prompt['prompt'] });
 
+    console.log(`Prompting ChatGPT...`);
     let result;
     try {
         let completion = await openai.createChatCompletion({
